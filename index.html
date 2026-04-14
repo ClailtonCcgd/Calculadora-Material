@@ -6,30 +6,52 @@
 
   <style>
     body {
-      font-family: Arial;
-      text-align: center;
-      margin-top: 50px;
-      background: #f4f4f4;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
+
     .box {
       background: white;
-      padding: 20px;
-      border-radius: 10px;
-      display: inline-block;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 30px;
+      border-radius: 15px;
+      width: 320px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      text-align: center;
     }
+
     input, select {
-      margin: 10px;
-      padding: 10px;
-      width: 220px;
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
     }
+
     button {
-      padding: 10px 20px;
-      background: #28a745;
-      color: white;
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      border-radius: 8px;
       border: none;
+      background: #4facfe;
+      color: white;
+      font-size: 16px;
       cursor: pointer;
-      border-radius: 5px;
+    }
+
+    #resultado {
+      margin-top: 20px;
+      text-align: left;
+    }
+
+    .checkbox {
+      text-align: left;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -37,7 +59,7 @@
 <body>
 
 <div class="box">
-  <h1>Calculadora</h1>
+  <h2>Calculadora</h2>
 
   <select id="tipo" onchange="mostrarCampos()">
     <option value="">Escolha o tipo</option>
@@ -50,39 +72,33 @@
     <h3>PVC</h3>
 
     <input type="number" id="largura" placeholder="Largura (m)">
-    <br>
     <input type="number" id="comprimento" placeholder="Comprimento (m)">
-    <br>
     <input type="number" id="valorMetro" placeholder="Valor do m²">
-    <br>
 
-    <h4>Perfil</h4>
-    <input type="number" id="qtdPerfil" placeholder="Quantidade de perfil">
-    <br>
-    <input type="number" id="valorPerfil" placeholder="Valor do perfil">
-    <br>
-
-    <h4>Parafusos</h4>
-    <input type="number" id="metragemParafuso" placeholder="Metragem total (m)">
+    <div class="checkbox">
+      <input type="checkbox" id="sobraPVC">
+      <label for="sobraPVC">Adicionar 10% de sobra</label>
+    </div>
   </div>
 
-  <!-- CERÂMICA NOVA -->
+  <!-- CERÂMICA -->
   <div id="ceramicaCampos" style="display:none;">
     <h3>Cerâmica</h3>
 
     <input type="number" id="larguraCeramica" placeholder="Largura (m)">
-    <br>
     <input type="number" id="comprimentoCeramica" placeholder="Comprimento (m)">
-    <br>
     <input type="number" id="m2Caixa" placeholder="m² por caixa">
-    <br>
     <input type="number" id="valorCeramica" placeholder="Valor do m²">
+
+    <div class="checkbox">
+      <input type="checkbox" id="sobraCeramica">
+      <label for="sobraCeramica">Adicionar 10% de sobra</label>
+    </div>
   </div>
 
-  <br>
   <button onclick="calcular()">Calcular</button>
 
-  <h2 id="resultado"></h2>
+  <div id="resultado"></div>
 </div>
 
 <script>
@@ -105,48 +121,48 @@ function calcular() {
   let tipo = document.getElementById("tipo").value;
   let resultado = "";
 
+  // ===== PVC =====
   if (tipo === "pvc") {
     let largura = parseFloat(document.getElementById("largura").value);
     let comprimento = parseFloat(document.getElementById("comprimento").value);
-    let valorMetro = parseFloat(document.getElementById("valorMetro").value);
+    let valor = parseFloat(document.getElementById("valorMetro").value);
+    let usarSobra = document.getElementById("sobraPVC").checked;
 
-    let metragem = largura * comprimento;
-    let totalMaterial = metragem * valorMetro;
+    let area = largura * comprimento;
 
-    let qtdPerfil = parseFloat(document.getElementById("qtdPerfil").value) || 0;
-    let valorPerfil = parseFloat(document.getElementById("valorPerfil").value) || 0;
-    let totalPerfil = qtdPerfil * valorPerfil;
+    if (usarSobra) {
+      area = area * 1.10;
+    }
 
-    let metragemParafuso = parseFloat(document.getElementById("metragemParafuso").value) || 0;
-    let parafusos = metragemParafuso * 15;
-
-    let totalGeral = totalMaterial + totalPerfil;
+    let total = area * valor;
 
     resultado = `
-      Metragem: ${metragem.toFixed(2)} m² <br>
-      Material: R$ ${totalMaterial.toFixed(2)} <br>
-      Perfil: R$ ${totalPerfil.toFixed(2)} <br>
-      Parafusos: ${parafusos} unidades <br>
-      <strong>Total: R$ ${totalGeral.toFixed(2)}</strong>
+      Área: ${area.toFixed(2)} m² <br>
+      Total: R$ ${total.toFixed(2)}
     `;
   }
 
+  // ===== CERÂMICA =====
   if (tipo === "ceramica") {
     let largura = parseFloat(document.getElementById("larguraCeramica").value);
     let comprimento = parseFloat(document.getElementById("comprimentoCeramica").value);
     let m2Caixa = parseFloat(document.getElementById("m2Caixa").value);
     let valor = parseFloat(document.getElementById("valorCeramica").value);
+    let usarSobra = document.getElementById("sobraCeramica").checked;
 
     let area = largura * comprimento;
-    let areaComSobra = area * 1.10; // +10%
-    let caixas = Math.ceil(areaComSobra / m2Caixa);
-    let total = areaComSobra * valor;
+
+    if (usarSobra) {
+      area = area * 1.10;
+    }
+
+    let caixas = Math.ceil(area / m2Caixa);
+    let total = area * valor;
 
     resultado = `
       Área: ${area.toFixed(2)} m² <br>
-      Área com sobra: ${areaComSobra.toFixed(2)} m² <br>
-      Caixas necessárias: ${caixas} <br>
-      <strong>Total: R$ ${total.toFixed(2)}</strong>
+      Caixas: ${caixas} <br>
+      Total: R$ ${total.toFixed(2)}
     `;
   }
 
