@@ -66,7 +66,7 @@
     <input type="number" id="metragemParafuso" placeholder="Metragem total (m)">
   </div>
 
-  <!-- CERÂMICA NOVA -->
+  <!-- CERÂMICA -->
   <div id="ceramicaCampos" style="display:none;">
     <h3>Cerâmica</h3>
 
@@ -105,20 +105,28 @@ function calcular() {
   let tipo = document.getElementById("tipo").value;
   let resultado = "";
 
+  // ================= PVC =================
   if (tipo === "pvc") {
     let largura = parseFloat(document.getElementById("largura").value);
     let comprimento = parseFloat(document.getElementById("comprimento").value);
     let valorMetro = parseFloat(document.getElementById("valorMetro").value);
 
+    if (!largura || !comprimento || !valorMetro) {
+      document.getElementById("resultado").innerHTML = "Preencha os campos de PVC!";
+      return;
+    }
+
     let metragem = largura * comprimento;
-    let totalMaterial = metragem * valorMetro;
+    let metragemComSobra = metragem * 1.10;
+
+    let totalMaterial = metragemComSobra * valorMetro;
 
     let qtdPerfil = parseFloat(document.getElementById("qtdPerfil").value) || 0;
     let valorPerfil = parseFloat(document.getElementById("valorPerfil").value) || 0;
     let totalPerfil = qtdPerfil * valorPerfil;
 
     let metragemParafuso = parseFloat(document.getElementById("metragemParafuso").value) || 0;
-    let parafusos = metragemParafuso * 15;
+    let parafusos = Math.ceil(metragemParafuso * 15);
 
     let totalGeral = totalMaterial + totalPerfil;
 
@@ -132,14 +140,21 @@ function calcular() {
     `;
   }
 
+  // ================= CERÂMICA =================
   if (tipo === "ceramica") {
     let largura = parseFloat(document.getElementById("larguraCeramica").value);
     let comprimento = parseFloat(document.getElementById("comprimentoCeramica").value);
     let m2Caixa = parseFloat(document.getElementById("m2Caixa").value);
     let valor = parseFloat(document.getElementById("valorCeramica").value);
 
+    if (!largura || !comprimento || !m2Caixa || !valor) {
+      document.getElementById("resultado").innerHTML = "Preencha os campos de cerâmica!";
+      return;
+    }
+
     let area = largura * comprimento;
-    let areaComSobra = area * 1.10; // +10%
+    let areaComSobra = area * 1.10;
+
     let caixas = Math.ceil(areaComSobra / m2Caixa);
     let total = areaComSobra * valor;
 
