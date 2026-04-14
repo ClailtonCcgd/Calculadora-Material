@@ -112,9 +112,14 @@
 function mostrarCampos() {
   let tipo = document.getElementById("tipo").value;
 
+  // Esconde tudo
   document.getElementById("pvcCampos").style.display = "none";
   document.getElementById("ceramicaCampos").style.display = "none";
 
+  // Limpa o resultado anterior
+  document.getElementById("resultado").innerHTML = "";
+
+  // Mostra o selecionado
   if (tipo === "pvc") {
     document.getElementById("pvcCampos").style.display = "block";
   }
