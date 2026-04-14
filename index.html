@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Calculadora de Material</title>
+
   <style>
     body {
       font-family: Arial;
@@ -17,10 +18,10 @@
       display: inline-block;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    input {
+    input, select {
       margin: 10px;
       padding: 10px;
-      width: 200px;
+      width: 220px;
     }
     button {
       padding: 10px 20px;
@@ -30,45 +31,118 @@
       cursor: pointer;
       border-radius: 5px;
     }
-    h2 {
-      margin-top: 20px;
-    }
   </style>
 </head>
+
 <body>
 
-  <div class="box">
-    <h1>Calculadora de Material</h1>
+<div class="box">
+  <h1>Calculadora</h1>
 
-    <input type="number" id="metragem" placeholder="Metragem (m²)">
+  <!-- Escolha -->
+  <select id="tipo" onchange="mostrarCampos()">
+    <option value="">Escolha o tipo</option>
+    <option value="pvc">PVC</option>
+    <option value="ceramica">Cerâmica</option>
+  </select>
+
+  <!-- PVC -->
+  <div id="pvcCampos" style="display:none;">
+    <h3>PVC</h3>
+
+    <input type="number" id="largura" placeholder="Largura (m)">
     <br>
-    <input type="number" id="valor" placeholder="Valor por m²">
+    <input type="number" id="comprimento" placeholder="Comprimento (m)">
     <br>
-    <input type="number" id="quantidade" placeholder="Quantidade">
+    <input type="number" id="valorMetro" placeholder="Valor do m²">
     <br>
 
-    <button onclick="calcular()">Calcular</button>
+    <h4>Perfil</h4>
+    <input type="number" id="qtdPerfil" placeholder="Quantidade de perfil">
+    <br>
+    <input type="number" id="valorPerfil" placeholder="Valor do perfil">
+    <br>
 
-    <h2 id="resultado"></h2>
+    <h4>Parafusos</h4>
+    <input type="number" id="metragemParafuso" placeholder="Metragem total (m)">
   </div>
 
-  <script>
-    function calcular() {
-      let metragem = parseFloat(document.getElementById("metragem").value);
-      let valor = parseFloat(document.getElementById("valor").value);
-      let quantidade = parseFloat(document.getElementById("quantidade").value);
+  <!-- Cerâmica -->
+  <div id="ceramicaCampos" style="display:none;">
+    <h3>Cerâmica</h3>
+    <input type="number" id="metragemCeramica" placeholder="Metragem (m²)">
+    <br>
+    <input type="number" id="valorCeramica" placeholder="Valor do m²">
+  </div>
 
-      if (!metragem || !valor || !quantidade) {
-        document.getElementById("resultado").innerText = "Preencha todos os campos!";
-        return;
-      }
+  <br>
+  <button onclick="calcular()">Calcular</button>
 
-      let total = metragem * valor * quantidade;
+  <h2 id="resultado"></h2>
+</div>
 
-      document.getElementById("resultado").innerText =
-        "Total: R$ " + total.toFixed(2);
-    }
-  </script>
+<script>
+function mostrarCampos() {
+  let tipo = document.getElementById("tipo").value;
+
+  document.getElementById("pvcCampos").style.display = "none";
+  document.getElementById("ceramicaCampos").style.display = "none";
+
+  if (tipo === "pvc") {
+    document.getElementById("pvcCampos").style.display = "block";
+  }
+
+  if (tipo === "ceramica") {
+    document.getElementById("ceramicaCampos").style.display = "block";
+  }
+}
+
+function calcular() {
+  let tipo = document.getElementById("tipo").value;
+  let resultado = "";
+
+  if (tipo === "pvc") {
+    let largura = parseFloat(document.getElementById("largura").value);
+    let comprimento = parseFloat(document.getElementById("comprimento").value);
+    let valorMetro = parseFloat(document.getElementById("valorMetro").value);
+
+    let metragem = largura * comprimento;
+    let totalMaterial = metragem * valorMetro;
+
+    // Perfil
+    let qtdPerfil = parseFloat(document.getElementById("qtdPerfil").value) || 0;
+    let valorPerfil = parseFloat(document.getElementById("valorPerfil").value) || 0;
+    let totalPerfil = qtdPerfil * valorPerfil;
+
+    // Parafusos
+    let metragemParafuso = parseFloat(document.getElementById("metragemParafuso").value) || 0;
+    let parafusos = metragemParafuso * 15;
+
+    let totalGeral = totalMaterial + totalPerfil;
+
+    resultado = `
+      Metragem: ${metragem.toFixed(2)} m² <br>
+      Material: R$ ${totalMaterial.toFixed(2)} <br>
+      Perfil: R$ ${totalPerfil.toFixed(2)} <br>
+      Parafusos: ${parafusos} unidades <br>
+      <strong>Total: R$ ${totalGeral.toFixed(2)}</strong>
+    `;
+  }
+
+  if (tipo === "ceramica") {
+    let metragem = parseFloat(document.getElementById("metragemCeramica").value);
+    let valor = parseFloat(document.getElementById("valorCeramica").value);
+
+    let total = metragem * valor;
+
+    resultado = `
+      Total: R$ ${total.toFixed(2)}
+    `;
+  }
+
+  document.getElementById("resultado").innerHTML = resultado;
+}
+</script>
 
 </body>
 </html>
