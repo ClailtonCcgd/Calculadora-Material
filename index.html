@@ -77,8 +77,15 @@
 
     <div class="checkbox">
       <input type="checkbox" id="sobraPVC">
-      <label for="sobraPVC">Adicionar 10% de sobra</label>
+      <label>Adicionar 10% de sobra</label>
     </div>
+
+    <h4>Perfil</h4>
+    <input type="number" id="qtdPerfil" placeholder="Quantidade de perfil">
+    <input type="number" id="valorPerfil" placeholder="Valor do perfil">
+
+    <h4>Parafusos</h4>
+    <input type="number" id="metragemParafuso" placeholder="Metragem total (m)">
   </div>
 
   <!-- CERÂMICA -->
@@ -92,7 +99,7 @@
 
     <div class="checkbox">
       <input type="checkbox" id="sobraCeramica">
-      <label for="sobraCeramica">Adicionar 10% de sobra</label>
+      <label>Adicionar 10% de sobra</label>
     </div>
   </div>
 
@@ -134,11 +141,25 @@ function calcular() {
       area = area * 1.10;
     }
 
-    let total = area * valor;
+    let totalMaterial = area * valor;
+
+    // Perfil
+    let qtdPerfil = parseFloat(document.getElementById("qtdPerfil").value) || 0;
+    let valorPerfil = parseFloat(document.getElementById("valorPerfil").value) || 0;
+    let totalPerfil = qtdPerfil * valorPerfil;
+
+    // Parafusos
+    let metragemParafuso = parseFloat(document.getElementById("metragemParafuso").value) || 0;
+    let parafusos = Math.ceil(metragemParafuso * 15);
+
+    let totalGeral = totalMaterial + totalPerfil;
 
     resultado = `
       Área: ${area.toFixed(2)} m² <br>
-      Total: R$ ${total.toFixed(2)}
+      Material: R$ ${totalMaterial.toFixed(2)} <br>
+      Perfil: R$ ${totalPerfil.toFixed(2)} <br>
+      Parafusos: ${parafusos} unidades <br>
+      <strong>Total: R$ ${totalGeral.toFixed(2)}</strong>
     `;
   }
 
@@ -162,7 +183,7 @@ function calcular() {
     resultado = `
       Área: ${area.toFixed(2)} m² <br>
       Caixas: ${caixas} <br>
-      Total: R$ ${total.toFixed(2)}
+      <strong>Total: R$ ${total.toFixed(2)}</strong>
     `;
   }
 
