@@ -39,14 +39,13 @@
 <div class="box">
   <h1>Calculadora</h1>
 
-  <!-- Escolha -->
   <select id="tipo" onchange="mostrarCampos()">
     <option value="">Escolha o tipo</option>
     <option value="pvc">PVC</option>
     <option value="ceramica">Cerâmica</option>
   </select>
 
-  <!-- inserir informações do Hambiente -->
+  <!-- PVC -->
   <div id="pvcCampos" style="display:none;">
     <h3>PVC</h3>
 
@@ -67,10 +66,15 @@
     <input type="number" id="metragemParafuso" placeholder="Metragem total (m)">
   </div>
 
-  <!-- Cerâmica -->
+  <!-- CERÂMICA NOVA -->
   <div id="ceramicaCampos" style="display:none;">
     <h3>Cerâmica</h3>
-    <input type="number" id="metragemCeramica" placeholder="Metragem (m²)">
+
+    <input type="number" id="larguraCeramica" placeholder="Largura (m)">
+    <br>
+    <input type="number" id="comprimentoCeramica" placeholder="Comprimento (m)">
+    <br>
+    <input type="number" id="m2Caixa" placeholder="m² por caixa">
     <br>
     <input type="number" id="valorCeramica" placeholder="Valor do m²">
   </div>
@@ -109,12 +113,10 @@ function calcular() {
     let metragem = largura * comprimento;
     let totalMaterial = metragem * valorMetro;
 
-    // Perfil
     let qtdPerfil = parseFloat(document.getElementById("qtdPerfil").value) || 0;
     let valorPerfil = parseFloat(document.getElementById("valorPerfil").value) || 0;
     let totalPerfil = qtdPerfil * valorPerfil;
 
-    // Parafusos
     let metragemParafuso = parseFloat(document.getElementById("metragemParafuso").value) || 0;
     let parafusos = metragemParafuso * 15;
 
@@ -130,13 +132,21 @@ function calcular() {
   }
 
   if (tipo === "ceramica") {
-    let metragem = parseFloat(document.getElementById("metragemCeramica").value);
+    let largura = parseFloat(document.getElementById("larguraCeramica").value);
+    let comprimento = parseFloat(document.getElementById("comprimentoCeramica").value);
+    let m2Caixa = parseFloat(document.getElementById("m2Caixa").value);
     let valor = parseFloat(document.getElementById("valorCeramica").value);
 
-    let total = metragem * valor;
+    let area = largura * comprimento;
+    let areaComSobra = area * 1.10; // +10%
+    let caixas = Math.ceil(areaComSobra / m2Caixa);
+    let total = areaComSobra * valor;
 
     resultado = `
-      Total: R$ ${total.toFixed(2)}
+      Área: ${area.toFixed(2)} m² <br>
+      Área com sobra: ${areaComSobra.toFixed(2)} m² <br>
+      Caixas necessárias: ${caixas} <br>
+      <strong>Total: R$ ${total.toFixed(2)}</strong>
     `;
   }
 
